@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 define('SAGE_ACF_GUTENBERG_BLOCKS_VERSION', '0.8.1');
 
 // Check whether WordPress and ACF are available; bail if not.
@@ -103,7 +104,7 @@ add_action('acf/init', function () {
                     'keywords' => explode(' ', $file_headers['keywords']),
                     'mode' => $file_headers['mode'],
                     'align' => $file_headers['align'],
-                    'render_callback'  => __NAMESPACE__.'\\sage_blocks_callback',
+                    'render_callback'  => __NAMESPACE__ . '\\sage_blocks_callback',
                     'enqueue_style'   => $file_headers['enqueue_style'],
                     'enqueue_script'  => $file_headers['enqueue_script'],
                     'enqueue_assets'  => $file_headers['enqueue_assets'],
@@ -161,7 +162,7 @@ add_action('acf/init', function () {
 
                 // If the Parent header is set in the template, restrict this block to specific parent blocks
                 if (!empty($file_headers['parent'])) {
-                    $data['parent'] = array_map(function($name) {
+                    $data['parent'] = array_map(function ($name) {
                         return validateBlockName($name);
                     }, explode(' ', $file_headers['parent']));
                 }
@@ -193,7 +194,7 @@ function sage_blocks_callback($block, $content = '', $is_preview = false, $post_
         $slug,
         $block['className'],
         $block['is_preview'] ? 'is-preview' : null,
-        'align'.$block['align']
+        'align' . $block['align']
     ];
 
     // Filter the block data.
@@ -206,10 +207,17 @@ function sage_blocks_callback($block, $content = '', $is_preview = false, $post_
     $directories = apply_filters('sage-acf-gutenberg-blocks-templates', []);
 
     foreach ($directories as $directory) {
-        $view = ltrim($directory, 'views/') . '/' . $slug;
-        $templatePath = get_stylesheet_directory() . "/$directory/$slug";
+        $dir = isSage10() ? \Roots\resource_path($directory) : \locate_template($directory);
 
-        if(!file_exists($templatePath.'.blade.php')){
+        // Sanity check whether the directory we're iterating over exists first
+        if (!file_exists($dir)) {
+            continue;
+        }
+
+        $view = ltrim($directory, 'views/') . '/' . $slug;
+        $templatePath = "{$dir}/{$slug}";
+
+        if (!file_exists($templatePath . '.blade.php')) {
             continue;
         }
 
@@ -271,7 +279,8 @@ function checkAssetPath(&$path, $block)
  *
  * @return void|string
  */
-function validateBlockName($name) {
+function validateBlockName($name)
+{
     global $sage_error;
 
     // A block name can only contain lowercase alphanumeric characters and dashes, and must begin with a letter.
