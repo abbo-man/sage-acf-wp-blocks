@@ -253,18 +253,39 @@ function removeBladeExtension($filename)
  */
 function checkAssetPath(&$path, $block)
 {
-    if (isSage10() && function_exists('\Roots\bundle')) {
-        $insertBlocks = function () use ($block, $path) {
-            if (has_block("acf/$block")) {
-                \Roots\bundle($path)->enqueue();
-            }
-        };
+    if (isSage10()) {
+        $useVite = class_exists('\Illuminate\Support\Facades\Vite');
 
-        add_action('wp_enqueue_scripts', $insertBlocks, 50);
-        add_action('enqueue_block_editor_assets', $insertBlocks, 50);
+        if ($useVite || function_exists('\Roots\bundle')) {
+            $insertBlocks = function () use ($block, $path, $useVite) {
+                if (!has_block("acf/$block")) {
+                    return;
+                }
 
-        $path = ''; // Reset path
-        return;
+                if (!$useVite) {
+                    \Roots\bundle($path)->enqueue();
+                    return;
+                }
+
+                $style = \Illuminate\Support\Facades\Vite::asset($path);
+
+                switch (pathinfo($style, PATHINFO_EXTENSION)) {
+                    case 'css':
+                        wp_enqueue_style($path, $style);
+                        break;
+                    case 'js':
+                    case 'mjs':
+                        wp_enqueue_script($path, $style);
+                        break;
+                }
+            };
+
+            add_action('wp_enqueue_scripts', $insertBlocks, 50);
+            add_action('enqueue_block_editor_assets', $insertBlocks, 50);
+
+            $path = ''; // Reset path
+            return;
+        }
     }
 
     if (preg_match("/^(styles|scripts)/", $path)) {
