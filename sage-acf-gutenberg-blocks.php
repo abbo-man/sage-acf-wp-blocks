@@ -167,8 +167,6 @@ add_action('acf/init', function () {
                     }, explode(' ', $file_headers['parent']));
                 }
 
-                dump($data);
-
                 // Register the block with ACF
                 \acf_register_block_type(apply_filters("sage/blocks/$slug/register-data", $data));
             }
