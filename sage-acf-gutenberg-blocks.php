@@ -256,7 +256,7 @@ function checkAssetPath(&$path, $block)
     if (isSage10()) {
         $useVite = class_exists('\Illuminate\Support\Facades\Vite');
 
-        if (!$useVite) {
+        if ($useVite) {
             $path = \Illuminate\Support\Facades\Vite::asset($path);
             return;
         } elseif (function_exists('\Roots\bundle')) {
