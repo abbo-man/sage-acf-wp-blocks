@@ -167,6 +167,8 @@ add_action('acf/init', function () {
                     }, explode(' ', $file_headers['parent']));
                 }
 
+                dump($data);
+
                 // Register the block with ACF
                 \acf_register_block_type(apply_filters("sage/blocks/$slug/register-data", $data));
             }
@@ -256,28 +258,16 @@ function checkAssetPath(&$path, $block)
     if (isSage10()) {
         $useVite = class_exists('\Illuminate\Support\Facades\Vite');
 
-        if ($useVite || function_exists('\Roots\bundle')) {
-            $insertBlocks = function () use ($block, $path, $useVite) {
+        if (!$useVite) {
+            $path = \Illuminate\Support\Facades\Vite::asset($path);
+            return;
+        } elseif (function_exists('\Roots\bundle')) {
+            $insertBlocks = function () use ($block, $path) {
                 if (!has_block("acf/$block")) {
                     return;
                 }
 
-                if (!$useVite) {
-                    \Roots\bundle($path)->enqueue();
-                    return;
-                }
-
-                $style = \Illuminate\Support\Facades\Vite::asset($path);
-
-                switch (pathinfo($style, PATHINFO_EXTENSION)) {
-                    case 'css':
-                        wp_enqueue_style($path, $style);
-                        break;
-                    case 'js':
-                    case 'mjs':
-                        wp_enqueue_script($path, $style);
-                        break;
-                }
+                \Roots\bundle($path)->enqueue();
             };
 
             add_action('wp_enqueue_scripts', $insertBlocks, 50);

@@ -6,7 +6,7 @@ This package is based heavily on [this article](https://medium.com/nicooprat/acf
 ## Installation
 Run the following in your Sage (v9 or 10) based theme directory:
 ```sh
-composer require "larodiel/sage-acf-gutenberg-blocks"
+composer require "abbo-man/sage-acf-gutenberg-blocks"
 ```
 
 ## Creating blocks
