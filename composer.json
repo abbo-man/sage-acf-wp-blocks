@@ -1,12 +1,12 @@
 {
-  "name": "larodiel/sage-acf-gutenberg-blocks",
+  "name": "abbo-man/sage-acf-gutenberg-blocks",
   "description": "Fork of the original Sage ACF Gutenberg Blocks project. Create Gutenberg blocks from Sage blade templates and ACF fields.",
   "keywords": [
     "wordpress",
     "gutenberg",
     "advanced custom fields"
   ],
-  "homepage": "https://github.com/larodiel/sage-acf-wp-blocks",
+  "homepage": "https://github.com/abbo-man/sage-acf-wp-blocks",
   "license": "MIT",
   "authors": [
     {
@@ -24,6 +24,12 @@
       "name": "Victor Larodiel",
       "email": "victor@larodiel.com",
       "homepage": "https://github.com/larodiel",
+      "role": "Developer"
+    },
+    {
+      "name": "Thomas Abbondi",
+      "email": "thomas.abbondi@opiquad.it",
+      "homepage": "https://github.com/abbo-man",
       "role": "Developer"
     }
   ],
